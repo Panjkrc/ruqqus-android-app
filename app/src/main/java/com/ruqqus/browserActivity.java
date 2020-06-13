@@ -29,7 +29,7 @@ public class browserActivity extends AppCompatActivity {
         mWebView.setWebViewClient(new WebViewClient(){
             @Override
             public void onLoadResource(WebView view, String url) {
-                textView.setText(mWebView.getUrl());
+                textView.setText(mWebView.getTitle());
             }
         });
         mWebView.getSettings().getJavaScriptEnabled();

@@ -27,20 +27,6 @@
         tools:layout_editor_absoluteY="50dp"
         tools:visibility="invisible" />
 
-    <ProgressBar
-
-        android:indeterminate="true"
-        android:indeterminateTintMode="src_atop"
-        android:indeterminateTint="#ffffff"
-
-        android:id="@+id/progressBar2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
-
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="68dp"

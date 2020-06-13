@@ -4,11 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -21,12 +22,16 @@ import static android.view.View.INVISIBLE;
 
 
 public class MainActivity extends Activity {
-
     private WebView mWebview ;
     private ProgressBar progressBar;
-    private ProgressBar progressBar2;
     private ImageView logo;
     private TextView errorOutputTextView;
+
+    RotateAnimation rotate = new RotateAnimation(
+            0, 360,
+            Animation.RELATIVE_TO_SELF, 0.5f,
+            Animation.RELATIVE_TO_SELF, 0.5f
+    );
 
     private String myurl = "https://ruqqus.com";
 
@@ -43,24 +48,22 @@ public class MainActivity extends Activity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
 
+
+
         errorOutputTextView = (TextView) findViewById(R.id.errorOutput);
         logo = (ImageView) findViewById(R.id.imageView);
         progressBar = findViewById(R.id.progressBar);
-        progressBar2 = findViewById(R.id.progressBar2);
         mWebview = (WebView)findViewById(R.id.webView);
 
-
-        progressBar2.setVisibility(View.VISIBLE);
-        progressBar2.animate();
         mWebview.setVisibility(INVISIBLE);
 
+        rotate.setDuration(1000);
+        rotate.setRepeatCount(Animation.INFINITE);
+        logo.startAnimation(rotate);
 
         mWebview.getSettings().setJavaScriptEnabled(true);
 
-
         mWebview.setWebViewClient(new WebViewClient(){
-
-
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -74,7 +77,6 @@ public class MainActivity extends Activity {
                 startActivity(intent);
 
                 return true;
-
             }
 
             @Override
@@ -103,7 +105,7 @@ public class MainActivity extends Activity {
 */
             @Override
             public void onPageFinished(WebView view, String url) {
-                progressBar2.setVisibility(INVISIBLE);
+                rotate.cancel();
                 logo.setVisibility(INVISIBLE);
                 mWebview.setVisibility(View.VISIBLE);
             }
