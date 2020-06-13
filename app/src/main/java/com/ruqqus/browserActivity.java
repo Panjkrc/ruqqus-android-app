@@ -15,7 +15,7 @@ import android.widget.TextView;
 public class browserActivity extends AppCompatActivity {
 
 
-    //ProgressBar progressBar;
+    ProgressBar progressBar2;
     private WebView mWebView;
     private TextView textView;
 
@@ -23,8 +23,8 @@ public class browserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browser);
-        //progressBar = findViewById(R.id.progressBar2);
-        textView =(TextView) findViewById(R.id.textView);
+        progressBar2 = findViewById(R.id.progressBar2);
+        textView = (TextView) findViewById(R.id.textView);
         mWebView = (WebView) findViewById(R.id.webViewBrowser);
         mWebView.setWebViewClient(new WebViewClient(){
             @Override
@@ -37,21 +37,21 @@ public class browserActivity extends AppCompatActivity {
         mWebView.setWebChromeClient(new WebChromeClient(){
 
 
-/*
+
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
-                progressBar.setVisibility(View.VISIBLE);
-                if(newProgress < 100 && progressBar.getVisibility() == ProgressBar.GONE){
-                    progressBar.setVisibility(ProgressBar.VISIBLE);
+                progressBar2.setVisibility(View.VISIBLE);
+                if(newProgress < 100 && progressBar2.getVisibility() == ProgressBar.GONE){
+                    progressBar2.setVisibility(ProgressBar.VISIBLE);
 
                 }
 
-                progressBar.setProgress(newProgress);
+                progressBar2.setProgress(newProgress);
                 if(newProgress == 100) {
-                    progressBar.setVisibility(ProgressBar.GONE);
+                    progressBar2.setVisibility(ProgressBar.GONE);
 
                 }
-            }*/
+            }
         });
 
         mWebView.loadUrl(ExternalUrl);

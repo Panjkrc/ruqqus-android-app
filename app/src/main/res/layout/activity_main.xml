@@ -16,6 +16,17 @@
 
     </WebView>
 
+    <TextView
+        android:id="@+id/errorOutput"
+        android:layout_width="258dp"
+        android:layout_height="178dp"
+        android:text="ERROR"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="50dp"
+        tools:visibility="invisible" />
+
     <ProgressBar
 
         android:indeterminate="true"
