@@ -24,13 +24,13 @@
         style="@android:style/Widget.Holo.Light.ImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="#272727"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.042"
         app:layout_constraintStart_toStartOf="@+id/toolbar"
         app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
-        tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteY="7dp"
-        android:backgroundTint="#272727"/>
+        tools:ignore="MissingConstraints" />
 
     <WebView
         android:id="@+id/webViewBrowser"
@@ -39,9 +39,21 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" >
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
     </WebView>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="119dp"
+        android:layout_height="20dp"
+        android:text="TextView"
+        android:textColor="#ffffff"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        tools:ignore="MissingConstraints" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

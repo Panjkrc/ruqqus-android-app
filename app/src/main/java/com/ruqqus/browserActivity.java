@@ -10,23 +10,33 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public class browserActivity extends AppCompatActivity {
 
 
     //ProgressBar progressBar;
     private WebView mWebView;
+    private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browser);
         //progressBar = findViewById(R.id.progressBar2);
+        textView =(TextView) findViewById(R.id.textView);
         mWebView = (WebView) findViewById(R.id.webViewBrowser);
-        mWebView.setWebViewClient(new WebViewClient());
+        mWebView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onLoadResource(WebView view, String url) {
+                textView.setText(mWebView.getUrl());
+            }
+        });
         mWebView.getSettings().getJavaScriptEnabled();
         String ExternalUrl = getIntent().getStringExtra("EXTERNAL_URL");
         mWebView.setWebChromeClient(new WebChromeClient(){
+
+
 /*
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
@@ -43,6 +53,7 @@ public class browserActivity extends AppCompatActivity {
                 }
             }*/
         });
+
         mWebView.loadUrl(ExternalUrl);
 
         ImageButton imageButton = (ImageButton) findViewById(R.id.imageButton);

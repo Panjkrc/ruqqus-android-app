@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -13,6 +15,7 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -20,6 +23,8 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
     private WebView mWebview ;
     ProgressBar progressBar;
+    ProgressBar progressBar2;
+    ImageView logo;
 
     String myurl = "https://ruqqus.com";
 
@@ -36,12 +41,22 @@ public class MainActivity extends Activity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
 
+        logo = (ImageView) findViewById(R.id.imageView);
         progressBar = findViewById(R.id.progressBar);
+        progressBar2 = findViewById(R.id.progressBar2);
         mWebview = (WebView)findViewById(R.id.webView);
+
         mWebview.getSettings().setJavaScriptEnabled(true);
 
 
         mWebview.setWebViewClient(new WebViewClient(){
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                progressBar2.setVisibility(View.VISIBLE);
+                progressBar2.animate();
+                mWebview.setVisibility(View.INVISIBLE);
+            }
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -62,6 +77,13 @@ public class MainActivity extends Activity {
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
                 Toast.makeText(getApplicationContext(), "Cannot load page", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                progressBar2.setVisibility(View.INVISIBLE);
+                logo.setVisibility(View.INVISIBLE);
+                mWebview.setVisibility(View.VISIBLE);
             }
         });
 
