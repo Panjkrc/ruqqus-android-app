@@ -84,25 +84,16 @@ public class MainActivity extends Activity {
                 mWebview.stopLoading();
                 mWebview.setVisibility(INVISIBLE);
 
+                Intent intent = new Intent(getBaseContext(), errorHandler.class);
+                startActivity(intent);
+
                 errorOutputTextView.setVisibility(View.VISIBLE);
                 errorOutputTextView.setText("\nError code: " + errorCode + "\nError description: " + description + "\nFailingURL: " + failingUrl);
 
                 Toast.makeText(getApplicationContext(), "Error occured, please check newtwork connectivity", Toast.LENGTH_LONG).show();
 
             }
-/*
-            @Override
-            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                mWebview.stopLoading();
-                mWebview.setVisibility(INVISIBLE);
 
-                errorOutputTextView.setVisibility(View.VISIBLE);
-                errorOutputTextView.setText("Error: " +);
-
-                Toast.makeText(getApplicationContext(), "Error occured, please check newtwork connectivity", Toast.LENGTH_LONG).show();
-
-            }
-*/
             @Override
             public void onPageFinished(WebView view, String url) {
                 mWebview.setVisibility(View.VISIBLE);
