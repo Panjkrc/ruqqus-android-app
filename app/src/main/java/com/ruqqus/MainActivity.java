@@ -105,9 +105,12 @@ public class MainActivity extends Activity {
 */
             @Override
             public void onPageFinished(WebView view, String url) {
-                rotate.cancel();
-                logo.setVisibility(INVISIBLE);
                 mWebview.setVisibility(View.VISIBLE);
+                rotate.cancel();
+                logo.setVisibility(View.INVISIBLE);
+                logo.setVisibility(View.GONE);
+
+
             }
         });
 

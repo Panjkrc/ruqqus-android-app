@@ -7,6 +7,18 @@
     android:background="#272727"
     tools:context=".MainActivity">
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="68dp"
+        android:layout_height="93dp"
+        android:background="#00FFFFFF"
+        android:contentDescription="ruqqus logo image"
+        android:src="@drawable/logo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <WebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
@@ -26,18 +38,6 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteY="50dp"
         tools:visibility="invisible" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="68dp"
-        android:layout_height="93dp"
-        android:background="#00FFFFFF"
-        android:src="@drawable/logo"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="ruqqus logo image" />
 
     <ProgressBar
         android:id="@+id/progressBar"
