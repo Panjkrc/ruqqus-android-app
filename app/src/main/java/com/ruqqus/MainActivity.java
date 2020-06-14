@@ -1,5 +1,6 @@
 package com.ruqqus;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -33,8 +34,7 @@ public class MainActivity extends Activity {
             Animation.RELATIVE_TO_SELF, 0.5f
     );
 
-    private String myurl = "https://ruqqus.com";
-
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -50,17 +50,23 @@ public class MainActivity extends Activity {
 
 
 
-        errorOutputTextView = (TextView) findViewById(R.id.errorOutput);
-        logo = (ImageView) findViewById(R.id.imageView);
+        errorOutputTextView = findViewById(R.id.errorOutput);
+        logo = findViewById(R.id.imageView);
         progressBar = findViewById(R.id.progressBar);
-        mWebview = (WebView)findViewById(R.id.webView);
+        mWebview = findViewById(R.id.webView);
 
         mWebview.setVisibility(INVISIBLE);
 
-        rotate.setDuration(1000);
+        double logo_rotation_speed = 0.75;
+        rotate.setDuration(((long) (1000 / logo_rotation_speed)));
         rotate.setRepeatCount(Animation.INFINITE);
         logo.startAnimation(rotate);
 
+
+        mWebview.getSettings().setDatabaseEnabled(true);
+        mWebview.getSettings().setGeolocationEnabled(true);
+        mWebview.getSettings().setSupportMultipleWindows(true);
+        mWebview.getSettings().setAppCacheEnabled(true);
         mWebview.getSettings().setJavaScriptEnabled(true);
 
         mWebview.setWebViewClient(new WebViewClient(){
@@ -79,6 +85,7 @@ public class MainActivity extends Activity {
                 return true;
             }
 
+            @SuppressLint("SetTextI18n")
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 mWebview.stopLoading();
@@ -123,6 +130,7 @@ public class MainActivity extends Activity {
                 super.onProgressChanged(view, newProgress);
             }
         });
+        String myurl = "https://ruqqus.com";
         mWebview.loadUrl(myurl);
     }
 
@@ -131,15 +139,13 @@ public class MainActivity extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(event.getAction() == KeyEvent.ACTION_DOWN){
-            switch(keyCode)
-            {
-                case KeyEvent.KEYCODE_BACK:
-                    if(mWebview.canGoBack() == true){
-                        mWebview.goBack();
-                    }else{
-                        finish();
-                    }
-                    return true;
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                if (mWebview.canGoBack()) {
+                    mWebview.goBack();
+                } else {
+                    finish();
+                }
+                return true;
             }
         }
         return super.onKeyDown(keyCode, event);

@@ -2,6 +2,7 @@ package com.ruqqus;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -16,25 +17,33 @@ public class browserActivity extends AppCompatActivity {
 
 
     ProgressBar progressBar2;
-    private WebView mWebView;
+    private WebView mWebview;
     private TextView textView;
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browser);
         progressBar2 = findViewById(R.id.progressBar2);
-        textView = (TextView) findViewById(R.id.textView);
-        mWebView = (WebView) findViewById(R.id.webViewBrowser);
-        mWebView.setWebViewClient(new WebViewClient(){
+        textView = findViewById(R.id.textView);
+        mWebview = findViewById(R.id.webViewBrowser);
+        mWebview.setWebViewClient(new WebViewClient(){
             @Override
             public void onLoadResource(WebView view, String url) {
-                textView.setText(mWebView.getTitle());
+                textView.setText(mWebview.getTitle());
             }
         });
-        mWebView.getSettings().getJavaScriptEnabled();
+
+        mWebview.getSettings().getJavaScriptEnabled();
+        mWebview.getSettings().setDatabaseEnabled(true);
+        mWebview.getSettings().setGeolocationEnabled(true);
+        mWebview.getSettings().setSupportMultipleWindows(true);
+        mWebview.getSettings().setAppCacheEnabled(true);
+        mWebview.getSettings().setJavaScriptEnabled(true);
+
         String ExternalUrl = getIntent().getStringExtra("EXTERNAL_URL");
-        mWebView.setWebChromeClient(new WebChromeClient(){
+        mWebview.setWebChromeClient(new WebChromeClient(){
 
 
 
@@ -54,9 +63,9 @@ public class browserActivity extends AppCompatActivity {
             }
         });
 
-        mWebView.loadUrl(ExternalUrl);
+        mWebview.loadUrl(ExternalUrl);
 
-        ImageButton imageButton = (ImageButton) findViewById(R.id.imageButton);
+        ImageButton imageButton = findViewById(R.id.imageButton);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,15 +77,13 @@ public class browserActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(event.getAction() == KeyEvent.ACTION_DOWN){
-            switch(keyCode)
-            {
-                case KeyEvent.KEYCODE_BACK:
-                    if(mWebView.canGoBack() == true){
-                        mWebView.goBack();
-                    }else{
-                        finish();
-                    }
-                    return true;
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                if (mWebview.canGoBack()) {
+                    mWebview.goBack();
+                } else {
+                    finish();
+                }
+                return true;
             }
         }
         return super.onKeyDown(keyCode, event);
