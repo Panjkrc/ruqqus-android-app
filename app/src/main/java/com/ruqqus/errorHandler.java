@@ -13,6 +13,5 @@ public class errorHandler extends Activity {
         setContentView(R.layout.activity_main);
 
 
-
     }
 }

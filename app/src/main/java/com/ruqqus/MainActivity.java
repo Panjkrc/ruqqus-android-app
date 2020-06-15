@@ -23,31 +23,28 @@ import static android.view.View.INVISIBLE;
 
 
 public class MainActivity extends Activity {
-    private WebView mWebview ;
-    private ProgressBar progressBar;
-    private ImageView logo;
-    private TextView errorOutputTextView;
-
     RotateAnimation rotate = new RotateAnimation(
             0, 360,
             Animation.RELATIVE_TO_SELF, 0.5f,
             Animation.RELATIVE_TO_SELF, 0.5f
     );
+    private WebView mWebview;
+    private ProgressBar progressBar;
+    private ImageView logo;
+    private TextView errorOutputTextView;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         int currentOrientation = getResources().getConfiguration().orientation;
         if (currentOrientation == Configuration.ORIENTATION_PORTRAIT) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }else {
+        } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
-
 
 
         errorOutputTextView = findViewById(R.id.errorOutput);
@@ -57,7 +54,7 @@ public class MainActivity extends Activity {
 
         mWebview.setVisibility(INVISIBLE);
 
-        double logo_rotation_speed = 0.75;
+        double logo_rotation_speed = 1.0;
         rotate.setDuration(((long) (1000 / logo_rotation_speed)));
         rotate.setRepeatCount(Animation.INFINITE);
         logo.startAnimation(rotate);
@@ -69,7 +66,7 @@ public class MainActivity extends Activity {
         mWebview.getSettings().setAppCacheEnabled(true);
         mWebview.getSettings().setJavaScriptEnabled(true);
 
-        mWebview.setWebViewClient(new WebViewClient(){
+        mWebview.setWebViewClient(new WebViewClient() {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -112,18 +109,18 @@ public class MainActivity extends Activity {
             }
         });
 
-        mWebview.setWebChromeClient(new WebChromeClient(){
+        mWebview.setWebChromeClient(new WebChromeClient() {
 
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 progressBar.setVisibility(View.VISIBLE);
-                if(newProgress < 100 && progressBar.getVisibility() == ProgressBar.GONE){
+                if (newProgress < 100 && progressBar.getVisibility() == ProgressBar.GONE) {
                     progressBar.setVisibility(ProgressBar.VISIBLE);
 
                 }
 
                 progressBar.setProgress(newProgress);
-                if(newProgress == 100) {
+                if (newProgress == 100) {
                     progressBar.setVisibility(ProgressBar.GONE);
 
                 }
@@ -135,10 +132,9 @@ public class MainActivity extends Activity {
     }
 
 
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(event.getAction() == KeyEvent.ACTION_DOWN){
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (keyCode == KeyEvent.KEYCODE_BACK) {
                 if (mWebview.canGoBack()) {
                     mWebview.goBack();
@@ -150,4 +146,6 @@ public class MainActivity extends Activity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
+
 }
