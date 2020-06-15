@@ -17,3 +17,8 @@ If you have any feature request you can request them here:
 https://github.com/Panjkrc/ruqqus-android-app/issues
 
 NOTE: This app is still in BETA, it has potential of crashing. App is lacking features because it was made only two days ago (13.6.2020)
+
+![screemshot1](https://github.com/Panjkrc/ruqqus-android-app/blob/master/Images/App%20screenshots/screenshot%20(1).jpg)
+![screemshot2](https://github.com/Panjkrc/ruqqus-android-app/blob/master/Images/App%20screenshots/screenshot%20(2).jpg)
+![screemshot3](https://github.com/Panjkrc/ruqqus-android-app/blob/master/Images/App%20screenshots/screenshot%20(3).jpg)
+![screemshot4](https://github.com/Panjkrc/ruqqus-android-app/blob/master/Images/App%20screenshots/screenshot%20(4).jpg)
