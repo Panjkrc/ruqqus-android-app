@@ -33,10 +33,20 @@ public class MainActivity extends Activity {
     private ImageView logo;
     private TextView errorOutputTextView;
 
+    String myurl = "https://ruqqus.com";
+
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        if (intent != null && intent.hasCategory("android.intent.category.BROWSABLE")) {
+
+            myurl = intent.getDataString();
+
+        }
+
         setContentView(R.layout.activity_main);
 
         int currentOrientation = getResources().getConfiguration().orientation;
@@ -45,6 +55,7 @@ public class MainActivity extends Activity {
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
+
 
 
         errorOutputTextView = findViewById(R.id.errorOutput);
@@ -64,7 +75,10 @@ public class MainActivity extends Activity {
         mWebview.getSettings().setGeolocationEnabled(true);
         mWebview.getSettings().setSupportMultipleWindows(true);
         mWebview.getSettings().setAppCacheEnabled(true);
+        mWebview.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         mWebview.getSettings().setJavaScriptEnabled(true);
+
+
 
         mWebview.setWebViewClient(new WebViewClient() {
 
@@ -127,7 +141,7 @@ public class MainActivity extends Activity {
                 super.onProgressChanged(view, newProgress);
             }
         });
-        String myurl = "https://ruqqus.com";
+
         mWebview.loadUrl(myurl);
     }
 
