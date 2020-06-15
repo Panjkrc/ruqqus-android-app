@@ -33,6 +33,7 @@ public class MainActivity extends Activity {
     private ImageView logo;
     private TextView errorOutputTextView;
 
+
     String myurl = "https://ruqqus.com";
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -40,10 +41,11 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = getIntent();
-        if (intent != null && intent.hasCategory("android.intent.category.BROWSABLE")) {
+        Intent fromExternalintent = getIntent();
 
-            myurl = intent.getDataString();
+        if (fromExternalintent != null && fromExternalintent.hasCategory("android.intent.category.BROWSABLE")) {
+
+            myurl = fromExternalintent.getDataString();
 
         }
 
@@ -124,6 +126,8 @@ public class MainActivity extends Activity {
         });
 
         mWebview.setWebChromeClient(new WebChromeClient() {
+
+
 
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
