@@ -28,13 +28,11 @@ public class MainActivity extends Activity {
             Animation.RELATIVE_TO_SELF, 0.5f,
             Animation.RELATIVE_TO_SELF, 0.5f
     );
+    String myurl = "https://www.ruqqus.com";
     private WebView mWebview;
     private ProgressBar progressBar;
     private ImageView logo;
     private TextView errorOutputTextView;
-
-
-    String myurl = "https://ruqqus.com";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -59,30 +57,26 @@ public class MainActivity extends Activity {
         }
 
 
-
         errorOutputTextView = findViewById(R.id.errorOutput);
         logo = findViewById(R.id.imageView);
         progressBar = findViewById(R.id.progressBar);
         mWebview = findViewById(R.id.webView);
 
-        mWebview.setVisibility(INVISIBLE);
-
-        double logo_rotation_speed = 1.0;
-        rotate.setDuration(((long) (1000 / logo_rotation_speed)));
-        rotate.setRepeatCount(Animation.INFINITE);
-        logo.startAnimation(rotate);
-
-
+        mWebview.getSettings().setAllowFileAccess(true);
+        mWebview.getSettings().setAllowContentAccess(true);
+        mWebview.getSettings().setAllowFileAccessFromFileURLs(true);
+        mWebview.getSettings().setAllowUniversalAccessFromFileURLs(true);
         mWebview.getSettings().setDatabaseEnabled(true);
         mWebview.getSettings().setGeolocationEnabled(true);
-        mWebview.getSettings().setSupportMultipleWindows(true);
         mWebview.getSettings().setAppCacheEnabled(true);
-        mWebview.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+        mWebview.getSettings().setDomStorageEnabled(true);
         mWebview.getSettings().setJavaScriptEnabled(true);
 
+        StartLoadingScreen();
 
 
         mWebview.setWebViewClient(new WebViewClient() {
+
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -116,17 +110,11 @@ public class MainActivity extends Activity {
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                mWebview.setVisibility(View.VISIBLE);
-                rotate.cancel();
-                logo.setVisibility(View.INVISIBLE);
-                logo.setVisibility(View.GONE);
-
-
+                EndLoadingScreen();
             }
         });
 
         mWebview.setWebChromeClient(new WebChromeClient() {
-
 
 
             @Override
@@ -141,6 +129,9 @@ public class MainActivity extends Activity {
                 if (newProgress == 100) {
                     progressBar.setVisibility(ProgressBar.GONE);
 
+                }
+                if (newProgress >= 80) {
+                    EndLoadingScreen();
                 }
                 super.onProgressChanged(view, newProgress);
             }
@@ -165,5 +156,21 @@ public class MainActivity extends Activity {
         return super.onKeyDown(keyCode, event);
     }
 
+    void StartLoadingScreen() {
+        mWebview.setVisibility(INVISIBLE);
+        double logo_rotation_speed = 1.0;
+        rotate.setDuration(((long) (1000 / logo_rotation_speed)));
+        rotate.setRepeatCount(Animation.INFINITE);
+        logo.startAnimation(rotate);
+
+    }
+
+    void EndLoadingScreen() {
+        mWebview.setVisibility(View.VISIBLE);
+        rotate.cancel();
+        logo.setVisibility(View.INVISIBLE);
+        logo.setVisibility(View.GONE);
+    }
 
 }
+
