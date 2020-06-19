@@ -132,13 +132,10 @@ public class MainActivity extends Activity {
                 mWebview.stopLoading();
                 mWebview.setVisibility(INVISIBLE);
 
-                Intent intent = new Intent(getBaseContext(), errorHandler.class);
-                startActivity(intent);
-
                 errorOutputTextView.setVisibility(View.VISIBLE);
                 errorOutputTextView.setText("\nError code: " + errorCode + "\nError description: " + description + "\nFailingURL: " + failingUrl);
 
-                Toast.makeText(getApplicationContext(), "Error occured, please check newtwork connectivity", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Error occurred, please check network connectivity", Toast.LENGTH_LONG).show();
 
             }
 
