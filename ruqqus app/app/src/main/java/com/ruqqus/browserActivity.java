@@ -18,8 +18,10 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import java.util.Objects;
 
 public class browserActivity extends AppCompatActivity {
@@ -45,10 +47,14 @@ public class browserActivity extends AppCompatActivity {
             }
         });
 
+        mWebview.getSettings().setAllowFileAccess(true);
+        mWebview.getSettings().setAllowContentAccess(true);
+        mWebview.getSettings().setAllowFileAccessFromFileURLs(true);
+        mWebview.getSettings().setAllowUniversalAccessFromFileURLs(true);
         mWebview.getSettings().setDatabaseEnabled(true);
         mWebview.getSettings().setGeolocationEnabled(true);
-        mWebview.getSettings().setSupportMultipleWindows(true);
         mWebview.getSettings().setAppCacheEnabled(true);
+        mWebview.getSettings().setDomStorageEnabled(true);
         mWebview.getSettings().setJavaScriptEnabled(true);
 
 
@@ -117,22 +123,19 @@ public class browserActivity extends AppCompatActivity {
             case R.id.refresh:
                 mWebview.loadUrl(mWebview.getUrl());
                 return true;
+
             case R.id.cancel:
                 mWebview.stopLoading();
                 return true;
+
             case R.id.copy_url:
-
-                ClipboardManager clipboard = (ClipboardManager)
-                        getSystemService(Context.CLIPBOARD_SERVICE);
-
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("simple text", mWebview.getUrl());
                 clipboard.setPrimaryClip(clip);
-
                 Toast.makeText(getApplicationContext(), "Copied to clipboard", Toast.LENGTH_LONG).show();
                 return true;
 
             case R.id.open_in_external_browser:
-
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mWebview.getUrl()));
                 startActivity(intent);
                 return true;

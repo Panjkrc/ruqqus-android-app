@@ -28,7 +28,7 @@ public class MainActivity extends Activity {
             Animation.RELATIVE_TO_SELF, 0.5f,
             Animation.RELATIVE_TO_SELF, 0.5f
     );
-    String myurl = "https://www.ruqqus.com";
+    String myurl = "https://ruqqus.com";
     private WebView mWebview;
     private ProgressBar progressBar;
     private ImageView logo;
