@@ -16,7 +16,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,8 +27,8 @@ public class browserActivity extends AppCompatActivity {
 
 
     ProgressBar progressBar2;
+    Toolbar toolbar;
     private WebView mWebview;
-    private TextView textView;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -37,16 +36,8 @@ public class browserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browser);
         progressBar2 = findViewById(R.id.progressBar2);
-        textView = findViewById(R.id.textView);
-        mWebview = findViewById(R.id.webViewBrowser);
-        mWebview.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onLoadResource(WebView view, String url) {
-                textView.setMaxLines(1);
-                textView.setText(mWebview.getUrl());
-            }
-        });
 
+        mWebview = findViewById(R.id.webViewBrowser);
         mWebview.getSettings().setAllowFileAccess(true);
         mWebview.getSettings().setAllowContentAccess(true);
         mWebview.getSettings().setAllowFileAccessFromFileURLs(true);
@@ -57,10 +48,11 @@ public class browserActivity extends AppCompatActivity {
         mWebview.getSettings().setDomStorageEnabled(true);
         mWebview.getSettings().setJavaScriptEnabled(true);
 
+        String ExternalUrl = getIntent().getStringExtra("EXTERNAL_URL");
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
+
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +61,21 @@ public class browserActivity extends AppCompatActivity {
             }
         });
 
-        String ExternalUrl = getIntent().getStringExtra("EXTERNAL_URL");
+        mWebview.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if ("ruqqus.com".equals(Uri.parse(url).getHost())) {
+                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                    intent.putExtra("URL_FROM_BROWSER_ACTIVITY", url);
+                    startActivity(intent);
+                    finish();
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
         mWebview.setWebChromeClient(new WebChromeClient() {
 
             @Override
@@ -89,7 +95,7 @@ public class browserActivity extends AppCompatActivity {
         });
 
         mWebview.loadUrl(ExternalUrl);
-
+        Objects.requireNonNull(getSupportActionBar()).setTitle(mWebview.getUrl());
 
     }
 

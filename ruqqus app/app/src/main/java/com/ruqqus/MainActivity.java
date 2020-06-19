@@ -7,10 +7,14 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -19,10 +23,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import static android.view.View.INVISIBLE;
 
 
 public class MainActivity extends Activity {
+    public static final int REQUEST_CODE_LOLIPOP = 1;
+    public final static int RESULT_CODE_ICE_CREAM = 2;
+    public static ValueCallback<Uri[]> mFilePathCallback;
+    public static String mCameraPhotoPath;
+    public static ValueCallback<Uri> mUploadMessage;
     RotateAnimation rotate = new RotateAnimation(
             0, 360,
             Animation.RELATIVE_TO_SELF, 0.5f,
@@ -34,10 +48,30 @@ public class MainActivity extends Activity {
     private ImageView logo;
     private TextView errorOutputTextView;
 
+    public static File createImageFile() throws IOException {
+        // Create an image file name
+        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        return File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String url_from_browser_activity = getIntent().getStringExtra("RUQQUS_URL");
+
+        if (url_from_browser_activity != null) {
+            myurl = url_from_browser_activity;
+
+        }
 
         Intent fromExternalintent = getIntent();
 
@@ -116,6 +150,55 @@ public class MainActivity extends Activity {
 
         mWebview.setWebChromeClient(new WebChromeClient() {
 
+            String TAG;
+
+            public boolean onShowFileChooser(
+                    WebView webView, ValueCallback<Uri[]> filePathCallback,
+                    FileChooserParams fileChooserParams) {
+                if (mFilePathCallback != null) {
+                    mFilePathCallback.onReceiveValue(null);
+                }
+                mFilePathCallback = filePathCallback;
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(MainActivity.this.getPackageManager()) != null) {
+                    // Create the File where the photo should go
+                    File photoFile = null;
+                    try {
+                        photoFile = createImageFile();
+                        takePictureIntent.putExtra("PhotoPath", mCameraPhotoPath);
+                    } catch (IOException ex) {
+                        // Error occurred while creating the File
+                        Log.e(TAG, "Unable to create Image File", ex);
+                    }
+                    // Continue only if the File was successfully created
+                    if (photoFile != null) {
+                        mCameraPhotoPath = "file:" + photoFile.getAbsolutePath();
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                Uri.fromFile(photoFile));
+                    } else {
+                        takePictureIntent = null;
+                    }
+                }
+                Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                contentSelectionIntent.setType("image/*");
+                Intent[] intentArray;
+                if (takePictureIntent != null) {
+                    intentArray = new Intent[]{takePictureIntent};
+                } else {
+                    intentArray = new Intent[0];
+                }
+                Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
+                chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
+                chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
+
+                startActivityForResult(chooserIntent, REQUEST_CODE_LOLIPOP);
+
+
+                return true;
+            }
+
 
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
@@ -139,7 +222,6 @@ public class MainActivity extends Activity {
 
         mWebview.loadUrl(myurl);
     }
-
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -171,6 +253,41 @@ public class MainActivity extends Activity {
         logo.setVisibility(View.INVISIBLE);
         logo.setVisibility(View.GONE);
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case RESULT_CODE_ICE_CREAM:
+                Uri uri = null;
+                if (data != null) {
+                    uri = data.getData();
+                }
+                mUploadMessage.onReceiveValue(uri);
+                mUploadMessage = null;
+                break;
+            case REQUEST_CODE_LOLIPOP:
+                Uri[] results = null;
+                // Check that the response is a good one
+                if (resultCode == Activity.RESULT_OK) {
+                    if (data == null) {
+                        // If there is not data, then we may have taken a photo
+                        if (mCameraPhotoPath != null) {
+                            results = new Uri[]{Uri.parse(mCameraPhotoPath)};
+                        }
+                    } else {
+                        String dataString = data.getDataString();
+                        if (dataString != null) {
+                            results = new Uri[]{Uri.parse(dataString)};
+                        }
+                    }
+                }
+                mFilePathCallback.onReceiveValue(results);
+                mFilePathCallback = null;
+                break;
+        }
+    }
+
 
 }
 
