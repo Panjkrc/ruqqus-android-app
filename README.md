@@ -3,7 +3,7 @@ Ruqqus Android APP
 
 BETA Version of UNOFFICIAL Ruqqus Android APP
 
-Ruqqus devs have been informed about existence of this app, and agree with it being on Google Play (I will publish Google Play link once it gets reviewed by Google) under condition of it being called UNOFFICIAL APP
+Ruqqus devs have been informed about existence of this app, and agree with it being on Google Play under condition of it being called UNOFFICIAL APP
 
 
 [![](https://github.com/Panjkrc/ruqqus-android-app/blob/master/Images/App%20screenshots/google-play-badge.png)](https://play.google.com/store/apps/details?id=com.ruqqus)
