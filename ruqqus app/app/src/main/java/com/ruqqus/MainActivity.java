@@ -30,7 +30,6 @@ import java.util.Date;
 
 import static android.view.View.INVISIBLE;
 
-
 public class MainActivity extends Activity {
     public static final int REQUEST_CODE_LOLIPOP = 1;
     public final static int RESULT_CODE_ICE_CREAM = 2;
