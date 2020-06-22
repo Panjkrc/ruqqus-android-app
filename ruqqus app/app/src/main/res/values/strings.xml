@@ -6,4 +6,6 @@
     <string name="cancel">Cancel</string>
     <string name="open_in_external_browser">Open in external browser</string>
     <string name="copy_url">Copy URL</string>
+    <string name="errorHandlerOutputText">Service Unavailable</string>
+    <string name="copy_error">Copy Error</string>
 </resources>

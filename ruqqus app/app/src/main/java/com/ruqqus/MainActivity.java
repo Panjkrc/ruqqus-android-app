@@ -47,18 +47,7 @@ public class MainActivity extends Activity {
     private ImageView logo;
     private TextView errorOutputTextView;
 
-    public static File createImageFile() throws IOException {
-        // Create an image file name
-        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        return File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-    }
+
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -113,7 +102,7 @@ public class MainActivity extends Activity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if ("ruqqus.com".equals(Uri.parse(url).getHost())) {
+                if (("ruqqus.com".equals(Uri.parse(url).getHost())) || ("i.ruqqus.com".equals(Uri.parse(url).getHost()))) {
                     // This is my website, so do not override; let my WebView load the page
                     return false;
                 }
@@ -128,13 +117,22 @@ public class MainActivity extends Activity {
             @SuppressLint("SetTextI18n")
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+
+                String[] error_data = {
+                        String.valueOf(errorCode),
+                        description,
+                        failingUrl
+                };
+
                 mWebview.stopLoading();
                 mWebview.setVisibility(INVISIBLE);
 
-                errorOutputTextView.setVisibility(View.VISIBLE);
-                errorOutputTextView.setText("\nError code: " + errorCode + "\nError description: " + description + "\nFailingURL: " + failingUrl);
+                Intent intent = new Intent(getBaseContext(), errorHandlerActivity.class);
+                intent.putExtra("ERROR_DATA", error_data);
+                startActivity(intent);
 
-                Toast.makeText(getApplicationContext(), "Error occurred, please check network connectivity", Toast.LENGTH_LONG).show();
+
+
 
             }
 
@@ -284,6 +282,17 @@ public class MainActivity extends Activity {
         }
     }
 
-
+    public static File createImageFile() throws IOException {
+        // Create an image file name
+        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        return File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+    }
 }
 

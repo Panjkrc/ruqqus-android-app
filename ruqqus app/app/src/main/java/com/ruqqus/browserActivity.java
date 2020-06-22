@@ -23,6 +23,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import java.util.Objects;
 
+import static android.view.View.INVISIBLE;
+
 public class browserActivity extends AppCompatActivity {
 
 
@@ -62,6 +64,24 @@ public class browserActivity extends AppCompatActivity {
         });
 
         mWebview.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+
+                String[] error_data = {
+                        String.valueOf(errorCode),
+                        description,
+                        failingUrl
+                };
+
+                mWebview.stopLoading();
+                mWebview.setVisibility(INVISIBLE);
+
+                Intent intent = new Intent(getBaseContext(), errorHandlerActivity.class);
+                intent.putExtra("ERROR_DATA", error_data);
+                startActivity(intent);
+            }
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 if ("ruqqus.com".equals(Uri.parse(url).getHost())) {
@@ -136,7 +156,7 @@ public class browserActivity extends AppCompatActivity {
 
             case R.id.copy_url:
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("simple text", mWebview.getUrl());
+                ClipData clip = ClipData.newPlainText("url from ruqqus", mWebview.getUrl());
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(getApplicationContext(), "Copied to clipboard", Toast.LENGTH_LONG).show();
                 return true;

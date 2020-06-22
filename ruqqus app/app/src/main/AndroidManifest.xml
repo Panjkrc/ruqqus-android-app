@@ -15,15 +15,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".errorHandlerActivity"></activity>
         <activity android:name=".browserActivity" />
         <activity android:name=".MainActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -33,6 +32,7 @@
                 <data android:scheme="http" />
                 <data android:scheme="https" />
                 <data android:host="ruqqus.com" />
+                <data android:host="i.ruqqus.com" />
             </intent-filter>
         </activity>
     </application>
