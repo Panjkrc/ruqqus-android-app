@@ -6,7 +6,7 @@
     android:layout_height="50dp"
     android:background="#272727"
     android:transitionGroup="false"
-    app:menu="@menu/menu"
+    app:menu="@menu/browser_menu"
     app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel"
     app:titleTextAppearance="@style/Toolbar.TitleText">
 

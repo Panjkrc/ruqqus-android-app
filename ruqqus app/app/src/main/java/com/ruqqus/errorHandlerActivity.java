@@ -1,7 +1,5 @@
 package com.ruqqus;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -10,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class errorHandlerActivity extends AppCompatActivity {
     public TextView errorOutput;
@@ -30,10 +30,6 @@ public class errorHandlerActivity extends AppCompatActivity {
 
         error = errorOutput.getText();
 
-
-    }
-
-    public void copyError(View view) {
         final Button copyButton = findViewById(R.id.copyErrorButton);
 
         copyButton.setOnClickListener(new View.OnClickListener() {
@@ -45,6 +41,5 @@ public class errorHandlerActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Copied to clipboard", Toast.LENGTH_LONG).show();
             }
         });
-
     }
 }

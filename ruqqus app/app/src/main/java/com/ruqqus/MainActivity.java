@@ -2,6 +2,7 @@ package com.ruqqus;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -10,18 +11,26 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.google.android.material.navigation.NavigationView;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,24 +39,44 @@ import java.util.Date;
 
 import static android.view.View.INVISIBLE;
 
-public class MainActivity extends Activity {
-    public static final int REQUEST_CODE_LOLIPOP = 1;
-    public final static int RESULT_CODE_ICE_CREAM = 2;
-    public static ValueCallback<Uri[]> mFilePathCallback;
-    public static String mCameraPhotoPath;
-    public static ValueCallback<Uri> mUploadMessage;
+public class MainActivity extends Activity
+        implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final int REQUEST_CODE_LOLIPOP = 1;
+    private final static int RESULT_CODE_ICE_CREAM = 2;
+    private static ValueCallback<Uri[]> mFilePathCallback;
+    private static String mCameraPhotoPath;
+    private static ValueCallback<Uri> mUploadMessage;
+
     RotateAnimation rotate = new RotateAnimation(
             0, 360,
             Animation.RELATIVE_TO_SELF, 0.5f,
             Animation.RELATIVE_TO_SELF, 0.5f
     );
+
     String myurl = "https://ruqqus.com";
+    String[] supported_urls = {
+            "ruqqus.com",
+            "i.ruqqus.com"
+    };
+
     private WebView mWebview;
     private ProgressBar progressBar;
     private ImageView logo;
-    private TextView errorOutputTextView;
+    private DrawerLayout drawerLayout;
 
-
+    public static File createImageFile() throws IOException {
+        // Create an image file name
+        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        return File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -78,8 +107,14 @@ public class MainActivity extends Activity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
 
+        drawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
 
-        errorOutputTextView = findViewById(R.id.errorOutput);
+        if (navigationView != null) {
+            navigationView.setNavigationItemSelectedListener(this);
+        }
+
+
         logo = findViewById(R.id.imageView);
         progressBar = findViewById(R.id.progressBar);
         mWebview = findViewById(R.id.webView);
@@ -93,6 +128,10 @@ public class MainActivity extends Activity {
         mWebview.getSettings().setAppCacheEnabled(true);
         mWebview.getSettings().setDomStorageEnabled(true);
         mWebview.getSettings().setJavaScriptEnabled(true);
+        mWebview.getSettings().setBuiltInZoomControls(true);
+        mWebview.getSettings().setDisplayZoomControls(false);
+        registerForContextMenu(mWebview);
+
 
         StartLoadingScreen();
 
@@ -102,16 +141,20 @@ public class MainActivity extends Activity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (("ruqqus.com".equals(Uri.parse(url).getHost())) || ("i.ruqqus.com".equals(Uri.parse(url).getHost()))) {
+
+                for (String inArray : supported_urls) {
                     // This is my website, so do not override; let my WebView load the page
-                    return false;
+                    if (inArray.equals(Uri.parse(url).getHost())) {
+                        return false;
+                    }
+
                 }
                 // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
                 Intent intent = new Intent(getBaseContext(), browserActivity.class);
                 intent.putExtra("EXTERNAL_URL", url);
                 startActivity(intent);
-
                 return true;
+
             }
 
             @SuppressLint("SetTextI18n")
@@ -130,8 +173,6 @@ public class MainActivity extends Activity {
                 Intent intent = new Intent(getBaseContext(), errorHandlerActivity.class);
                 intent.putExtra("ERROR_DATA", error_data);
                 startActivity(intent);
-
-
 
 
             }
@@ -238,6 +279,7 @@ public class MainActivity extends Activity {
         rotate.setDuration(((long) (1000 / logo_rotation_speed)));
         rotate.setRepeatCount(Animation.INFINITE);
         logo.startAnimation(rotate);
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
     }
 
@@ -246,6 +288,7 @@ public class MainActivity extends Activity {
         rotate.cancel();
         logo.setVisibility(View.INVISIBLE);
         logo.setVisibility(View.GONE);
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
 
     @Override
@@ -282,17 +325,88 @@ public class MainActivity extends Activity {
         }
     }
 
-    public static File createImageFile() throws IOException {
-        // Create an image file name
-        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        return File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        // Handle navigation view item clicks here.
+        switch (item.getItemId()) {
+            case R.id.drawer_home:
+                mWebview.loadUrl(myurl);
+                drawer.closeDrawer(GravityCompat.START);
+
+                return true;
+            case R.id.drawer_create_post:
+                mWebview.loadUrl("https://ruqqus.com/submit");
+                drawer.closeDrawer(GravityCompat.START);
+
+                return true;
+            case R.id.drawer_settings_account:
+                mWebview.loadUrl("https://ruqqus.com/settings");
+                drawer.closeDrawer(GravityCompat.START);
+
+                return true;
+            case R.id.drawer_about:
+                mWebview.loadUrl("https://ruqqus.com/help/about");
+                drawer.closeDrawer(GravityCompat.START);
+
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu contextMenu, View view,
+                                    ContextMenu.ContextMenuInfo contextMenuInfo) {
+        super.onCreateContextMenu(contextMenu, view, contextMenuInfo);
+
+        final WebView.HitTestResult webViewHitTestResult = mWebview.getHitTestResult();
+
+        if (webViewHitTestResult.getType() == WebView.HitTestResult.IMAGE_TYPE ||
+                webViewHitTestResult.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
+
+            contextMenu.setHeaderTitle("Download Image From Below");
+
+            contextMenu.add(0, 1, 0, "Save - Download Image")
+                    .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+
+                            String DownloadImageURL = webViewHitTestResult.getExtra();
+
+                            if (URLUtil.isValidUrl(DownloadImageURL)) {
+
+                                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(DownloadImageURL));
+                                request.allowScanningByMediaScanner();
+
+
+                                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                                DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                                downloadManager.enqueue(request);
+
+                                Toast.makeText(MainActivity.this, "Image Downloaded Successfully.", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(MainActivity.this, "Sorry.. Something Went Wrong.", Toast.LENGTH_LONG).show();
+                            }
+                            return false;
+                        }
+                    });
+            contextMenu.add(0, 2, 1, "Share post")
+                    .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            String DownloadImageURL = webViewHitTestResult.getExtra();
+
+                            Intent myIntent = new Intent(Intent.ACTION_SEND);
+                            myIntent.setType("text/plain");
+                            myIntent.putExtra("SHARE_URL", DownloadImageURL);
+                            startActivity(Intent.createChooser(myIntent, "Share Using"));
+                            return false;
+                        }
+                    });
+
+
+        }
     }
 }
-

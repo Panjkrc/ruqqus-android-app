@@ -8,4 +8,11 @@
     <string name="copy_url">Copy URL</string>
     <string name="errorHandlerOutputText">Service Unavailable</string>
     <string name="copy_error">Copy Error</string>
+    <string name="navigation_about">About</string>
+    <string name="navigation_settings_account">Account Settings</string>
+    <string name="navigation_settings_app">App Settings</string>
+    <string name="navigation_create_post">Create post</string>
+    <string name="navigation_home">Home</string>
+    <string name="error">ERROR</string>
+    <string name="ruqqus_logo_image">ruqqus logo image</string>
 </resources>

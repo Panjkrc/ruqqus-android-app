@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_settings"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/menu"
+        android:title="@string/options">
+        <menu>
+            <item
+                android:id="@+id/refresh"
+                android:title="@string/refresh"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/cancel"
+                app:showAsAction="never"
+                android:title="@string/cancel" />
+            <item
+                android:id="@+id/open_in_external_browser"
+                app:showAsAction="never"
+                android:title="@string/open_in_external_browser" />
+            <item
+                android:id="@+id/copy_url"
+                app:showAsAction="never"
+                android:title="@string/copy_url" />
+        </menu>
+    </item>
+
+</menu>

@@ -39,6 +39,7 @@ public class browserActivity extends AppCompatActivity {
         setContentView(R.layout.activity_browser);
         progressBar2 = findViewById(R.id.progressBar2);
 
+
         mWebview = findViewById(R.id.webViewBrowser);
         mWebview.getSettings().setAllowFileAccess(true);
         mWebview.getSettings().setAllowContentAccess(true);
@@ -49,6 +50,9 @@ public class browserActivity extends AppCompatActivity {
         mWebview.getSettings().setAppCacheEnabled(true);
         mWebview.getSettings().setDomStorageEnabled(true);
         mWebview.getSettings().setJavaScriptEnabled(true);
+        mWebview.getSettings().setLoadWithOverviewMode(true);
+        mWebview.getSettings().setBuiltInZoomControls(true);
+        mWebview.getSettings().setDisplayZoomControls(false);
 
         String ExternalUrl = getIntent().getStringExtra("EXTERNAL_URL");
 
@@ -138,7 +142,7 @@ public class browserActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.browser_menu, menu);
         return true;
     }
 
