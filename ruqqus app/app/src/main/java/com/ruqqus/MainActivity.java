@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -47,19 +48,16 @@ public class MainActivity extends Activity
     private static ValueCallback<Uri[]> mFilePathCallback;
     private static String mCameraPhotoPath;
     private static ValueCallback<Uri> mUploadMessage;
-
     RotateAnimation rotate = new RotateAnimation(
             0, 360,
             Animation.RELATIVE_TO_SELF, 0.5f,
             Animation.RELATIVE_TO_SELF, 0.5f
     );
-
     String myurl = "https://ruqqus.com";
     String[] supported_urls = {
             "ruqqus.com",
             "i.ruqqus.com"
     };
-
     private WebView mWebview;
     private ProgressBar progressBar;
     private ImageView logo;
@@ -130,6 +128,9 @@ public class MainActivity extends Activity
         mWebview.getSettings().setJavaScriptEnabled(true);
         mWebview.getSettings().setBuiltInZoomControls(true);
         mWebview.getSettings().setDisplayZoomControls(false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            mWebview.setForceDarkAllowed(true);
+        }
         registerForContextMenu(mWebview);
 
 
@@ -400,13 +401,11 @@ public class MainActivity extends Activity
 
                             Intent myIntent = new Intent(Intent.ACTION_SEND);
                             myIntent.setType("text/plain");
-                            myIntent.putExtra("SHARE_URL", DownloadImageURL);
+                            myIntent.putExtra(Intent.EXTRA_TEXT, DownloadImageURL);
                             startActivity(Intent.createChooser(myIntent, "Share Using"));
                             return false;
                         }
                     });
-
-
         }
     }
 }

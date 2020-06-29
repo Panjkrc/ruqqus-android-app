@@ -12,7 +12,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class errorHandlerActivity extends AppCompatActivity {
-    public TextView errorOutput;
     public CharSequence error;
 
 
