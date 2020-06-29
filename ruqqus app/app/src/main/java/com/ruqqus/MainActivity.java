@@ -58,6 +58,7 @@ public class MainActivity extends Activity
             "ruqqus.com",
             "i.ruqqus.com"
     };
+    
     private WebView mWebview;
     private ProgressBar progressBar;
     private ImageView logo;
@@ -133,9 +134,7 @@ public class MainActivity extends Activity
         }
         registerForContextMenu(mWebview);
 
-
         StartLoadingScreen();
-
 
         mWebview.setWebViewClient(new WebViewClient() {
 
