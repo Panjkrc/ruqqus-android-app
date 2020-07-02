@@ -94,9 +94,8 @@ public class browserActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                     return true;
-                }
-
-                return false;
+                } else
+                    return false;
             }
         });
 

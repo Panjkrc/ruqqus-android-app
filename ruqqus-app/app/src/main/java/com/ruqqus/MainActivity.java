@@ -21,6 +21,7 @@ import android.view.animation.RotateAnimation;
 import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
@@ -35,8 +36,13 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static android.view.View.INVISIBLE;
 
@@ -48,6 +54,7 @@ public class MainActivity extends Activity
     private static ValueCallback<Uri[]> mFilePathCallback;
     private static String mCameraPhotoPath;
     private static ValueCallback<Uri> mUploadMessage;
+
     RotateAnimation rotate = new RotateAnimation(
             0, 360,
             Animation.RELATIVE_TO_SELF, 0.5f,
@@ -58,7 +65,7 @@ public class MainActivity extends Activity
             "ruqqus.com",
             "i.ruqqus.com"
     };
-    
+
     private WebView mWebview;
     private ProgressBar progressBar;
     private ImageView logo;
@@ -77,7 +84,7 @@ public class MainActivity extends Activity
         );
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
+    @SuppressLint({"SetJavaScriptEnabled", "SdCardPath"})
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,14 +125,18 @@ public class MainActivity extends Activity
         progressBar = findViewById(R.id.progressBar);
         mWebview = findViewById(R.id.webView);
 
+
+        mWebview.getSettings().setDomStorageEnabled(true);
+        mWebview.getSettings().setAppCachePath("/data/data/" + getPackageName() + "/cache");
+        mWebview.getSettings().setAppCacheEnabled(true);
+        mWebview.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+
         mWebview.getSettings().setAllowFileAccess(true);
         mWebview.getSettings().setAllowContentAccess(true);
         mWebview.getSettings().setAllowFileAccessFromFileURLs(true);
         mWebview.getSettings().setAllowUniversalAccessFromFileURLs(true);
         mWebview.getSettings().setDatabaseEnabled(true);
         mWebview.getSettings().setGeolocationEnabled(true);
-        mWebview.getSettings().setAppCacheEnabled(true);
-        mWebview.getSettings().setDomStorageEnabled(true);
         mWebview.getSettings().setJavaScriptEnabled(true);
         mWebview.getSettings().setBuiltInZoomControls(true);
         mWebview.getSettings().setDisplayZoomControls(false);
@@ -142,6 +153,86 @@ public class MainActivity extends Activity
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
+                if (url == null) {
+                    return false;
+                }
+                if (url.startsWith("market://")) {
+                    view.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                    return true;
+                }
+                if (url.startsWith("mailto:")) {
+
+                    try {
+                        List<String> to = new ArrayList<>();
+                        List<String> cc = new ArrayList<>();
+                        List<String> bcc = new ArrayList<>();
+                        String subject = null;
+                        String body = null;
+
+                        url = url.replaceFirst("mailto:", "");
+
+                        String[] urlSections = url.split("&");
+                        if (urlSections.length >= 2) {
+
+                            to.addAll(Arrays.asList(urlSections[0].split(",")));
+
+                            for (int i = 1; i < urlSections.length; i++) {
+                                String urlSection = urlSections[i];
+                                String[] keyValue = urlSection.split("=");
+
+                                if (keyValue.length == 2) {
+                                    String key = keyValue[0];
+                                    String value = keyValue[1];
+
+                                    value = URLDecoder.decode(value, "UTF-8");
+
+                                    switch (key) {
+                                        case "cc":
+                                            cc.addAll(Arrays.asList(url.split(",")));
+                                            break;
+                                        case "bcc":
+                                            bcc.addAll(Arrays.asList(url.split(",")));
+                                            break;
+                                        case "subject":
+                                            subject = value;
+                                            break;
+                                        case "body":
+                                            body = value;
+                                            break;
+                                    }
+                                }
+                            }
+                        } else {
+                            to.addAll(Arrays.asList(url.split(",")));
+                        }
+
+                        Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+                        emailIntent.setType("message/rfc822");
+
+                        String[] dummyStringArray = new String[0]; // For list to array conversion
+                        emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, to.toArray(dummyStringArray));
+                        if (cc.size() > 0) {
+                            emailIntent.putExtra(android.content.Intent.EXTRA_CC, cc.toArray(dummyStringArray));
+                        }
+                        if (bcc.size() > 0) {
+                            emailIntent.putExtra(android.content.Intent.EXTRA_BCC, bcc.toArray(dummyStringArray));
+                        }
+                        if (subject != null) {
+                            emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
+                        }
+                        if (body != null) {
+                            emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
+                        }
+                        view.getContext().startActivity(emailIntent);
+
+                        return true;
+                    } catch (UnsupportedEncodingException e) {
+                        /* Won't happen*/
+                    }
+
+                }
+
+
                 for (String inArray : supported_urls) {
                     // This is my website, so do not override; let my WebView load the page
                     if (inArray.equals(Uri.parse(url).getHost())) {
@@ -149,6 +240,8 @@ public class MainActivity extends Activity
                     }
 
                 }
+
+
                 // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
                 Intent intent = new Intent(getBaseContext(), browserActivity.class);
                 intent.putExtra("EXTERNAL_URL", url);
@@ -257,6 +350,7 @@ public class MainActivity extends Activity
 
         mWebview.loadUrl(myurl);
     }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
