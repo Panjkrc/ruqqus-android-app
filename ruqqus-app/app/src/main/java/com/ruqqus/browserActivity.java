@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -41,16 +42,18 @@ public class browserActivity extends AppCompatActivity {
 
 
         mWebview = findViewById(R.id.webViewBrowser);
+        mWebview.getSettings().setDomStorageEnabled(true);
+        mWebview.getSettings().setAppCachePath(getCacheDir().getPath());
+        mWebview.getSettings().setAppCacheEnabled(true);
+        mWebview.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+
         mWebview.getSettings().setAllowFileAccess(true);
         mWebview.getSettings().setAllowContentAccess(true);
         mWebview.getSettings().setAllowFileAccessFromFileURLs(true);
         mWebview.getSettings().setAllowUniversalAccessFromFileURLs(true);
         mWebview.getSettings().setDatabaseEnabled(true);
         mWebview.getSettings().setGeolocationEnabled(true);
-        mWebview.getSettings().setAppCacheEnabled(true);
-        mWebview.getSettings().setDomStorageEnabled(true);
         mWebview.getSettings().setJavaScriptEnabled(true);
-        mWebview.getSettings().setLoadWithOverviewMode(true);
         mWebview.getSettings().setBuiltInZoomControls(true);
         mWebview.getSettings().setDisplayZoomControls(false);
 

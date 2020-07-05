@@ -25,7 +25,7 @@ public class errorHandlerActivity extends AppCompatActivity {
         String[] error_data = getIntent().getStringArrayExtra("ERROR_DATA");
 
         assert error_data != null;
-        errorOutput.append("\nError code: " + error_data[0] + "\nError description: " + error_data[1] + "\nFailingURL: " + error_data[2]);
+        errorOutput.append("\nError code: " + error_data[0] + " \nError description: " + error_data[1] + " \nFailingURL: " + error_data[2]);
 
         error = errorOutput.getText();
 

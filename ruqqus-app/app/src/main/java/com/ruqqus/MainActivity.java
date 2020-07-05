@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -127,10 +126,11 @@ public class MainActivity extends Activity
 
 
         mWebview.getSettings().setDomStorageEnabled(true);
-        mWebview.getSettings().setAppCachePath("/data/data/" + getPackageName() + "/cache");
+        mWebview.getSettings().setAppCachePath(getCacheDir().getPath());
         mWebview.getSettings().setAppCacheEnabled(true);
         mWebview.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
 
+        mWebview.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
         mWebview.getSettings().setAllowFileAccess(true);
         mWebview.getSettings().setAllowContentAccess(true);
         mWebview.getSettings().setAllowFileAccessFromFileURLs(true);
@@ -140,9 +140,7 @@ public class MainActivity extends Activity
         mWebview.getSettings().setJavaScriptEnabled(true);
         mWebview.getSettings().setBuiltInZoomControls(true);
         mWebview.getSettings().setDisplayZoomControls(false);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            mWebview.setForceDarkAllowed(true);
-        }
+
         registerForContextMenu(mWebview);
 
         StartLoadingScreen();
@@ -206,22 +204,22 @@ public class MainActivity extends Activity
                             to.addAll(Arrays.asList(url.split(",")));
                         }
 
-                        Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
                         emailIntent.setType("message/rfc822");
 
                         String[] dummyStringArray = new String[0]; // For list to array conversion
-                        emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, to.toArray(dummyStringArray));
+                        emailIntent.putExtra(Intent.EXTRA_EMAIL, to.toArray(dummyStringArray));
                         if (cc.size() > 0) {
-                            emailIntent.putExtra(android.content.Intent.EXTRA_CC, cc.toArray(dummyStringArray));
+                            emailIntent.putExtra(Intent.EXTRA_CC, cc.toArray(dummyStringArray));
                         }
                         if (bcc.size() > 0) {
-                            emailIntent.putExtra(android.content.Intent.EXTRA_BCC, bcc.toArray(dummyStringArray));
+                            emailIntent.putExtra(Intent.EXTRA_BCC, bcc.toArray(dummyStringArray));
                         }
                         if (subject != null) {
-                            emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
+                            emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
                         }
                         if (body != null) {
-                            emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
+                            emailIntent.putExtra(Intent.EXTRA_TEXT, body);
                         }
                         view.getContext().startActivity(emailIntent);
 
@@ -272,9 +270,12 @@ public class MainActivity extends Activity
 
             @Override
             public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
                 EndLoadingScreen();
+
             }
         });
+
 
         mWebview.setWebChromeClient(new WebChromeClient() {
 
@@ -340,6 +341,7 @@ public class MainActivity extends Activity
                 if (newProgress == 100) {
                     progressBar.setVisibility(ProgressBar.GONE);
 
+
                 }
                 if (newProgress >= 80) {
                     EndLoadingScreen();
@@ -384,6 +386,7 @@ public class MainActivity extends Activity
         logo.setVisibility(View.GONE);
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
