@@ -48,6 +48,7 @@ import static android.view.View.INVISIBLE;
 public class MainActivity extends Activity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+
     private static final int REQUEST_CODE_LOLIPOP = 1;
     private final static int RESULT_CODE_ICE_CREAM = 2;
     private static ValueCallback<Uri[]> mFilePathCallback;

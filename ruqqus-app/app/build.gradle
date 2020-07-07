@@ -5,7 +5,7 @@ android {
 
     defaultConfig {
         applicationId "com.ruqqus"
-        minSdkVersion 23
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 8
         versionName "1.1.0"
@@ -22,6 +22,7 @@ android {
 }
 
 dependencies {
+
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
