@@ -2,10 +2,15 @@ package com.ruqqus;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -125,6 +130,23 @@ public class MainActivity extends Activity
         progressBar = findViewById(R.id.progressBar);
         mWebview = findViewById(R.id.webView);
 
+        if (!CheckNetwork.isInternetAvailable(this)) //returns true if internet available
+        {
+            //if there is no internet do this
+            //setContentView(R.layout.activity_main);
+
+            new AlertDialog.Builder(this) //alert the person knowing they are about to close
+                    .setTitle("You need an internet connection to use ruqqus")
+                    .setMessage("Check to see if you're mobile data is on or you are connected to a wi-fi network.")
+                    .setPositiveButton("Close app", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .setNeutralButton("Okay", null)
+                    .show();
+        }
 
         mWebview.getSettings().setDomStorageEnabled(true);
         mWebview.getSettings().setAppCachePath(getCacheDir().getPath());
@@ -145,7 +167,6 @@ public class MainActivity extends Activity
         registerForContextMenu(mWebview);
 
         StartLoadingScreen();
-
         mWebview.setWebViewClient(new WebViewClient() {
 
 
@@ -265,6 +286,7 @@ public class MainActivity extends Activity
                 Intent intent = new Intent(getBaseContext(), errorHandlerActivity.class);
                 intent.putExtra("ERROR_DATA", error_data);
                 startActivity(intent);
+                finish();
 
 
             }
@@ -351,6 +373,8 @@ public class MainActivity extends Activity
             }
         });
 
+        mWebview.clearCache(true); // Clears cache when app is opened (sometimes users would have to clear this manually because cache was corrupted and app would not load properly)
+
         mWebview.loadUrl(myurl);
     }
 
@@ -362,7 +386,18 @@ public class MainActivity extends Activity
                 if (mWebview.canGoBack()) {
                     mWebview.goBack();
                 } else {
-                    finish();
+
+                    new AlertDialog.Builder(this)
+                            .setTitle("You are about to close the application")
+                            .setMessage("You cannot go back any further, would you like to close?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                }
+                            })
+                            .setNegativeButton("No", null)
+                            .show();
                 }
                 return true;
             }
@@ -503,6 +538,27 @@ public class MainActivity extends Activity
                             return false;
                         }
                     });
+        }
+    }
+
+    static class CheckNetwork {
+        private static final String TAG = CheckNetwork.class.getSimpleName();
+
+        public static boolean isInternetAvailable(Context context) {
+            NetworkInfo info = ((ConnectivityManager)
+                    context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+            if (info == null) {
+                Log.d(TAG, "no internet connection");
+                return false;
+            } else {
+                if (info.isConnected()) {
+                    Log.d(TAG, " internet connection available...");
+                } else {
+                    Log.d(TAG, " internet connection");
+                }
+                return true;
+            }
+
         }
     }
 }
