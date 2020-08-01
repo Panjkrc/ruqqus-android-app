@@ -45,9 +45,11 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static android.content.ContentValues.TAG;
 import static android.view.View.INVISIBLE;
 
 public class MainActivity extends Activity
@@ -68,13 +70,17 @@ public class MainActivity extends Activity
     String myurl = "https://ruqqus.com";
     String[] supported_urls = {
             "ruqqus.com",
-            "i.ruqqus.com"
+            "i.ruqqus.com",
+            "ruqq.us",
+            "ruqqus.org"
+
     };
 
     private WebView mWebview;
     private ProgressBar progressBar;
     private ImageView logo;
     private DrawerLayout drawerLayout;
+
 
     public static File createImageFile() throws IOException {
         // Create an image file name
@@ -101,13 +107,7 @@ public class MainActivity extends Activity
 
         }
 
-        Intent fromExternalintent = getIntent();
-
-        if (fromExternalintent != null && fromExternalintent.hasCategory("android.intent.category.BROWSABLE")) {
-
-            myurl = fromExternalintent.getDataString();
-
-        }
+        handleIntent(getIntent());
 
         setContentView(R.layout.activity_main);
 
@@ -376,8 +376,22 @@ public class MainActivity extends Activity
         mWebview.clearCache(true); // Clears cache when app is opened (sometimes users would have to clear this manually because cache was corrupted and app would not load properly)
 
         mWebview.loadUrl(myurl);
+
+
     }
 
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        String appLinkAction = intent.getAction();
+        Uri appLinkData = intent.getData();
+        if (Intent.ACTION_VIEW.equals(appLinkAction) && appLinkData != null){
+            myurl = appLinkData.toString();
+        }
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -511,11 +525,13 @@ public class MainActivity extends Activity
                             if (URLUtil.isValidUrl(DownloadImageURL)) {
 
                                 DownloadManager.Request request = new DownloadManager.Request(Uri.parse(DownloadImageURL));
+                                request.setDestinationInExternalFilesDir(getApplicationContext(), "dir", "rqs-" + Calendar.getInstance().getTime() + ".png");
                                 request.allowScanningByMediaScanner();
 
 
                                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                                 DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+
                                 downloadManager.enqueue(request);
 
                                 Toast.makeText(MainActivity.this, "Image Downloaded Successfully.", Toast.LENGTH_LONG).show();
