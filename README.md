@@ -1,5 +1,10 @@
 # UNOFFICIAL Ruqqus Android App - BETA
 
+
+# The app is currently suspened from Google Play, this should get fixed soon (day or two). Until then you can download .apk file from here https://github.com/Panjkrc/ruqqus-android-app/releases/latest/download/app-release.apk
+
+
+
 Ruqqus devs have been informed about existence of this app, and agree with it being on Google Play under condition of it being called UNOFFICIAL APP
 
 
