@@ -9,7 +9,7 @@ Ruqqus devs have been informed about existence of this app, and agree with it be
 Latest release of the app: 
 https://github.com/Panjkrc/ruqqus-android-app/releases/latest
 
-Direct .apk file donwload link: 
+Direct .apk file download link: 
 https://github.com/Panjkrc/ruqqus-android-app/releases/latest/download/app-release.apk
 
 If you have any issues with the app, please report them under: 
