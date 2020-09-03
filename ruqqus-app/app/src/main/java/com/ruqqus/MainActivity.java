@@ -40,16 +40,10 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
-import static android.content.ContentValues.TAG;
 import static android.view.View.INVISIBLE;
 
 public class MainActivity extends Activity
@@ -176,80 +170,9 @@ public class MainActivity extends Activity
                 if (url == null) {
                     return false;
                 }
-                if (url.startsWith("market://")) {
+                if (!url.startsWith("http") || !url.startsWith("https")) {
                     view.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                     return true;
-                }
-                if (url.startsWith("mailto:")) {
-
-                    try {
-                        List<String> to = new ArrayList<>();
-                        List<String> cc = new ArrayList<>();
-                        List<String> bcc = new ArrayList<>();
-                        String subject = null;
-                        String body = null;
-
-                        url = url.replaceFirst("mailto:", "");
-
-                        String[] urlSections = url.split("&");
-                        if (urlSections.length >= 2) {
-
-                            to.addAll(Arrays.asList(urlSections[0].split(",")));
-
-                            for (int i = 1; i < urlSections.length; i++) {
-                                String urlSection = urlSections[i];
-                                String[] keyValue = urlSection.split("=");
-
-                                if (keyValue.length == 2) {
-                                    String key = keyValue[0];
-                                    String value = keyValue[1];
-
-                                    value = URLDecoder.decode(value, "UTF-8");
-
-                                    switch (key) {
-                                        case "cc":
-                                            cc.addAll(Arrays.asList(url.split(",")));
-                                            break;
-                                        case "bcc":
-                                            bcc.addAll(Arrays.asList(url.split(",")));
-                                            break;
-                                        case "subject":
-                                            subject = value;
-                                            break;
-                                        case "body":
-                                            body = value;
-                                            break;
-                                    }
-                                }
-                            }
-                        } else {
-                            to.addAll(Arrays.asList(url.split(",")));
-                        }
-
-                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                        emailIntent.setType("message/rfc822");
-
-                        String[] dummyStringArray = new String[0]; // For list to array conversion
-                        emailIntent.putExtra(Intent.EXTRA_EMAIL, to.toArray(dummyStringArray));
-                        if (cc.size() > 0) {
-                            emailIntent.putExtra(Intent.EXTRA_CC, cc.toArray(dummyStringArray));
-                        }
-                        if (bcc.size() > 0) {
-                            emailIntent.putExtra(Intent.EXTRA_BCC, bcc.toArray(dummyStringArray));
-                        }
-                        if (subject != null) {
-                            emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-                        }
-                        if (body != null) {
-                            emailIntent.putExtra(Intent.EXTRA_TEXT, body);
-                        }
-                        view.getContext().startActivity(emailIntent);
-
-                        return true;
-                    } catch (UnsupportedEncodingException e) {
-                        /* Won't happen*/
-                    }
-
                 }
 
 
@@ -388,7 +311,7 @@ public class MainActivity extends Activity
     private void handleIntent(Intent intent) {
         String appLinkAction = intent.getAction();
         Uri appLinkData = intent.getData();
-        if (Intent.ACTION_VIEW.equals(appLinkAction) && appLinkData != null){
+        if (Intent.ACTION_VIEW.equals(appLinkAction) && appLinkData != null) {
             myurl = appLinkData.toString();
         }
     }
@@ -539,6 +462,8 @@ public class MainActivity extends Activity
                                 Toast.makeText(MainActivity.this, "Sorry.. Something Went Wrong.", Toast.LENGTH_LONG).show();
                             }
                             return false;
+
+
                         }
                     });
             contextMenu.add(0, 2, 1, "Share post")
@@ -555,6 +480,7 @@ public class MainActivity extends Activity
                         }
                     });
         }
+
     }
 
     static class CheckNetwork {
