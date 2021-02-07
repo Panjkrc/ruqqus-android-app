@@ -1,13 +1,14 @@
 package com.ruqqus;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -33,15 +34,17 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.artjimlop.altex.AltexImageDownloader;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import static android.view.View.INVISIBLE;
@@ -61,6 +64,8 @@ public class MainActivity extends Activity
             Animation.RELATIVE_TO_SELF, 0.5f,
             Animation.RELATIVE_TO_SELF, 0.5f
     );
+
+    String DownloadImageURL;
     String myurl = "https://ruqqus.com";
     String[] supported_urls = {
             "ruqqus.com",
@@ -296,6 +301,7 @@ public class MainActivity extends Activity
             }
         });
 
+        // Not sure if this is still needed
         mWebview.clearCache(true); // Clears cache when app is opened (sometimes users would have to clear this manually because cache was corrupted and app would not load properly)
 
         mWebview.loadUrl(myurl);
@@ -442,25 +448,17 @@ public class MainActivity extends Activity
                     .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem menuItem) {
+                            DownloadImageURL = webViewHitTestResult.getExtra();
+                            int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-                            String DownloadImageURL = webViewHitTestResult.getExtra();
+                            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
 
-                            if (URLUtil.isValidUrl(DownloadImageURL)) {
-
-                                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(DownloadImageURL));
-                                request.setDestinationInExternalFilesDir(getApplicationContext(), "dir", "rqs-" + Calendar.getInstance().getTime() + ".png");
-                                request.allowScanningByMediaScanner();
-
-
-                                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                                DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-
-                                downloadManager.enqueue(request);
-
-                                Toast.makeText(MainActivity.this, "Image Downloaded Successfully.", Toast.LENGTH_LONG).show();
+                                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                             } else {
-                                Toast.makeText(MainActivity.this, "Sorry.. Something Went Wrong.", Toast.LENGTH_LONG).show();
+                                downloadImage();
                             }
+
+
                             return false;
 
 
@@ -481,6 +479,41 @@ public class MainActivity extends Activity
                     });
         }
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    downloadImage();
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    public void downloadImage() {
+        if (URLUtil.isValidUrl(DownloadImageURL)) {
+            AltexImageDownloader.writeToDisk(getApplicationContext(), DownloadImageURL, "ruqqus");
+
+
+                               /* DownloadManager.Request request = new DownloadManager.Request(Uri.parse(DownloadImageURL));
+                                request.setDestinationInExternalFilesDir(getApplicationContext(), "dir", "rqs-" + Calendar.getInstance().getTime() + ".png");
+                                request.allowScanningByMediaScanner();
+
+
+                                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                                DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+
+                                downloadManager.enqueue(request);*/
+
+            Toast.makeText(MainActivity.this, "Image Downloaded Successfully.", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(MainActivity.this, "Sorry.. Something Went Wrong.", Toast.LENGTH_LONG).show();
+        }
     }
 
     static class CheckNetwork {
